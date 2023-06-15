@@ -4,10 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly user: Repository<User>) { }
+  constructor(
+    @InjectRepository(User) private readonly user: Repository<User>,
+    @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>
+  ) { }
 
   create(createUserDto: CreateUserDto, file) {
     const data = new User();
@@ -31,22 +35,25 @@ export class UserService {
     };
   }
 
-   findOneByUID(userId: string) {
+  findOneByUID(userId: string) {
     return this.user.findOne({
+      relations: ['tiezis'],
       where: { userId }
     });
   }
 
   findOneByMobile(mobile: string) {
     return this.user.findOne({
+      relations: ['tiezis'],
       where: { mobile }
     });
   }
 
-  findLoginUser(email: string) {
+  findOneByEmial(email: string) {
     return this.user.findOne({
+      relations: ['tiezis'],
       where: { email },
-      
+
     })
   }
 

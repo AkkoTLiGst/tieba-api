@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Request, Query } from '@nestjs/common';
 import { TieziService } from './tiezi.service';
 import { CreateTieziDto } from './dto/create-tiezi.dto';
 import { UpdateTieziDto } from './dto/update-tiezi.dto';
@@ -14,9 +14,9 @@ export class TieziController {
     return this.tieziService.create(createTieziDto, file);
   }
 
-  @Get()
-  findAll() {
-    return this.tieziService.findAll();
+  @Get('getTieziById')
+  getTieziById(@Query() data) {
+    return this.tieziService.getTieziById(data);
   }
 
   // 随机获得指定贴吧中的某个帖子

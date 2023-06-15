@@ -39,4 +39,15 @@ export class AuthController {
   getUser(@Req() req: Request){
     return req.user;
   }
+
+  // 根据token获取帖子
+  @ApiOperation({summary: '根据token获取帖子接口', description: '传入本地存储的token，返回帖子数组'})
+  @UseGuards(JwtAuthGuard)
+  @Get('tokenTiezi')
+  getUserTiezi(@Req() req: Request){
+    return this.authService.getUserTiezi(req.user);
+  }
+
+
+  // 更新token
 }

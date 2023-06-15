@@ -25,6 +25,9 @@ export class User {
     @Column()
     photoUser: string;
 
+    @Column({ nullable: true })
+    tiezisID: number;
+
 
     @OneToMany(() => Tiezi, (tiezi) => tiezi.user)
     tiezis: Tiezi[];

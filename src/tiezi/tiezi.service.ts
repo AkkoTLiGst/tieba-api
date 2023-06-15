@@ -7,6 +7,7 @@ import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { Tiezi } from './entities/tiezi.entity';
 import { tieziLists } from 'src/variable';
 import { User } from 'src/user/entities/user.entity';
+import { searchTiezi } from 'src/types/types';
 
 @Injectable()
 export class TieziService {
@@ -44,12 +45,13 @@ export class TieziService {
 
     // 多表联查
     tieziLists.push(zi);
-    
+
     ba.tiezis = tieziLists;
     this.tieba.save(ba);
 
     usr.tiezis = tieziLists;
     this.user.save(usr);
+    // console.log(tieziLists);
 
     return {
       message: '帖子创建成功',
@@ -57,30 +59,33 @@ export class TieziService {
     };
   }
 
-  findAll() {
-    return `This action returns all tiezi`;
+  getTieziById(data: searchTiezi) {
+    return this.tiezi.findOne({
+      where: {id: data.tieziID}
+    });
   }
 
   async randomTieziTB(tiebaId: number) {
-
-    const id = 10;
-
     // 截取最新的十条ctiebaId为"tiebaId"的数据
     let datalist = await this.tiezi.createQueryBuilder()
-    .where('tiezi.ctieBaId = :tiebaId', {tiebaId})
-    .orderBy('tiezi.createTimeTiezi', 'DESC')
-    .limit(10)
-    .getMany();
+      .where('tiezi.ctieBaId = :tiebaId', { tiebaId })
+      .orderBy('tiezi.createTimeTiezi', 'DESC')
+      .limit(10)
+      .getMany();
 
-    // 在最新的十条里随机获取其中一条
-    const data = datalist[Math.floor(Math.random() * 10)];
-    
+    let data: Tiezi;
+    if (datalist.length < 10) {
+      // 如果小于十条，就在总数之间随机获取
+      data = datalist[Math.floor(Math.random() * datalist.length)];
+    } else {
+      // 如果大于十条，在最新的十条里随机获取其中一条
+      data = datalist[Math.floor(Math.random() * 10)];
+    }
+
+
     // console.log(data.createTimeTiezi);
-    
-    return {
-      data,
-      code: 200
-    };
+
+    return data;
   }
 
   update(id: number, updateTieziDto: UpdateTieziDto) {

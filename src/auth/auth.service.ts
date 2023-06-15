@@ -30,7 +30,7 @@ export class AuthService {
     
     if (type === "email") {
       // 数据库查找user
-      const user = await this.userService.findLoginUser(needFind);
+      const user = await this.userService.findOneByEmial(needFind);
       return this.returnInfo(user, password);
     }else if(type === 'mobile'){
       const user = await this.userService.findOneByMobile(needFind);
@@ -55,7 +55,8 @@ export class AuthService {
       id: user.id,
       username: user.userName,
       email: user.email,
-      photoUser: user.photoUser
+      photoUser: user.photoUser,
+      tiezis: user.tiezis
     }
 
     return sanitizedUser;
@@ -65,21 +66,37 @@ export class AuthService {
 
   // 登录接口
   async login(userInfo: UserStatusDTO) {
-    const token = this.createToken(userInfo);
-    return {
-      userInfo,
-      ...token
+    const tiezisID = [];
+    for(let i = 0; i < userInfo.tiezis.length; i++){
+      tiezisID.push(userInfo.tiezis[i].id);
     }
 
+    const token = this.createToken(userInfo, tiezisID);
+    return {
+      ...token
+    }
   }
 
-  createToken({ username, id: userId, photoUser, email }: UserStatusDTO) {
-    const token = this.jwtService.sign({ username, userId, photoUser, email });
+  // 创建token
+  createToken({ username, id: userId, photoUser, email }: UserStatusDTO, tiezisID) {
+    const token = this.jwtService.sign({ username, userId, photoUser, email, tiezisID });
     const expires = process.env.expiresTime;
 
     return {
       token,
       expires,
     }
+  }
+
+  // 获取用户的所有帖子id
+  async getUserTiezi(user: UserStatusDTO){
+    const data = await this.userService.findOneByEmial(user.email);
+    
+    const tiezisID = [];
+    for(let i = 0; i < data.tiezis.length; i++){
+      tiezisID.push(data.tiezis[i].id);
+    }
+    return tiezisID;
+
   }
 }

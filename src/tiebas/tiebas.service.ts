@@ -34,11 +34,7 @@ export class TiebasService {
       }
     });
 
-    return {
-      data,
-      message: '查询成功',
-      code: 200
-    }
+    return data
   }
 
   async findOneByID(id: number) {
@@ -48,11 +44,7 @@ export class TiebasService {
       }
     });
 
-    return {
-      data,
-      message: '查询成功',
-      code: 200
-    }
+    return data
   }
 
 
