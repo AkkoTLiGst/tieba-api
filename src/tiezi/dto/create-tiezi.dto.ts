@@ -3,14 +3,11 @@ export class CreateTieziDto {
     createrId: number;
 
     // 目标贴吧
-    tieBaId: number;
+    ctieBaId: number;
 
     // 帖子标题
     threadTitle: string;
 
     // 帖子内容
     content: string;
-
-    // 配图
-    tieziImg: string;
 }

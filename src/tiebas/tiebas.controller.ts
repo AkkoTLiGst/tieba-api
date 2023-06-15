@@ -14,11 +14,23 @@ export class TiebasController {
     return this.tiebasService.create(createTiebaDto, file);
   }
 
-  // 获取贴吧信息
-  @Get('getTieba/:tiebaName')
-  findOne(@Param('tiebaName') tiebaName: string) {
-    return this.tiebasService.findOne(tiebaName);
+  // 通过吧名获取贴吧信息
+  @Get('tiebaByName/:tiebaName')
+  findOneByName(@Param('tiebaName') tiebaName: string) {
+    return this.tiebasService.findOneByName(tiebaName);
     
+  }
+
+  // 通过吧ID获取贴吧信息
+  @Get('tiebaById/:id')
+  findOneById(@Param('id') id: string) {
+    return this.tiebasService.findOneByID(+id);
+    
+  }
+
+  @Get('count')
+  findCount(){
+    return this.tiebasService.findCount();
   }
 
   @Patch(':id')

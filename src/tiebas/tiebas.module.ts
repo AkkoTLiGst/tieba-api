@@ -15,7 +15,7 @@ import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
     // 创建存储文件目录
     MulterModule.register({
       storage: diskStorage({
-        destination: join(__dirname, '../images/tiezi'),
+        destination: join(__dirname, '../images/tiebas'),
        
         filename: (_, file, callback) => {
           const filename = `${new Date().getTime() + extname(file.originalname)}`

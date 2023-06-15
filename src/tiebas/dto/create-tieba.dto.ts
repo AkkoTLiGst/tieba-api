@@ -11,4 +11,5 @@ export class CreateTiebaDto {
     // 关注
     @IsNumber(null, {message: '必须为数值'})
     subscribeTieba: number;
+
 }

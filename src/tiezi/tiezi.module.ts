@@ -7,13 +7,14 @@ import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { MulterModule } from '@nestjs/platform-express'
 import { diskStorage } from 'multer';
 import { extname, join } from 'path'
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tiezi, Tieba]),
+  imports: [TypeOrmModule.forFeature([Tiezi, Tieba, User]),
   // 创建存储文件目录
   MulterModule.register({
     storage: diskStorage({
-      destination: join(__dirname, '../images/tiebas'),
+      destination: join(__dirname, '../images/tiezi'),
 
       filename: (_, file, callback) => {
         const filename = `${new Date().getTime() + extname(file.originalname)}`

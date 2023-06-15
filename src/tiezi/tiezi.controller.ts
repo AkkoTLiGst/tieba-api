@@ -9,8 +9,9 @@ export class TieziController {
   constructor(private readonly tieziService: TieziService) { }
 
   @Post('create')
-  create(@Body() createTieziDto: CreateTieziDto) {
-    return this.tieziService.create(createTieziDto);
+  @UseInterceptors(FileInterceptor('file'))
+  create(@Body() createTieziDto: CreateTieziDto, @UploadedFile() file) {
+    return this.tieziService.create(createTieziDto, file);
   }
 
   @Get()
@@ -18,9 +19,10 @@ export class TieziController {
     return this.tieziService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tieziService.findOne(+id);
+  // 随机获得指定贴吧中的某个帖子
+  @Get('randomTieziTB/:tiebaId')
+  randomTieziTB(@Param('tiebaId') tiebaId: number) {
+    return this.tieziService.randomTieziTB(tiebaId);
   }
 
   @Patch(':id')

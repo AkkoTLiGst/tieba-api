@@ -27,19 +27,44 @@ export class TiebasService {
     };
   }
 
-  async findOne(TiebaName: string) {
+  async findOneByName(tiebaName: string) {
     const data = await this.tieba.findOne({
-      relations: ['tiezis'],
       where: {
-        tiebaName: TiebaName
+        tiebaName
       }
     });
 
     return {
       data,
-      url: `http://localhost:3000/tiebas/${data.photoTieba}`,
       message: '查询成功',
       code: 200
+    }
+  }
+
+  async findOneByID(id: number) {
+    const data = await this.tieba.findOne({
+      where: {
+        id
+      }
+    });
+
+    return {
+      data,
+      message: '查询成功',
+      code: 200
+    }
+  }
+
+
+
+  async findCount() {
+    const data = await this.tieba.count();
+    // console.log(data);
+
+    return {
+      data,
+      code: 200,
+      message: '总数查询成功'
     }
   }
 

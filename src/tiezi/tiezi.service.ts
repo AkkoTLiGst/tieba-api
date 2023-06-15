@@ -6,31 +6,51 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { Tiezi } from './entities/tiezi.entity';
 import { tieziLists } from 'src/variable';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class TieziService {
   constructor(
     @InjectRepository(Tieba) private readonly tieba: Repository<Tieba>,
-    @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>
+    @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>,
+    @InjectRepository(User) private readonly user: Repository<User>
   ) { }
 
-  async create(createTieziDto: CreateTieziDto) {
+  async create(createTieziDto: CreateTieziDto, file) {
     const zi = new Tiezi(); // 帖子数据库
-    const ba = await this.tieba.findOne({where: {id: createTieziDto.tieBaId}}) // 具体某个吧
+    const ba = await this.tieba.findOne({ where: { id: createTieziDto.ctieBaId } }); // 吧
+    const usr = await this.user.findOne({ where: { id: createTieziDto.createrId } }); // 用户
 
+
+    // 创建帖子信息
     zi.createrId = createTieziDto.createrId;
     zi.threadTitle = createTieziDto.threadTitle;
     zi.content = createTieziDto.content;
-    zi.tieziImg = createTieziDto.tieziImg;
+    zi.ctieBaId = createTieziDto.ctieBaId;
+    // 判断帖子是否包含图片
+    if (file) {
+      zi.tieziImg = file.filename;
+    } else {
+      zi.tieziImg = '';
+    }
 
+    // 初始化点赞、收藏和评论数量
+    zi.commentsNum = 0;
+    zi.star = 0;
+    zi.thumbUp = 0;
+
+    // 保存到数据库
     await this.tiezi.save(zi);
 
-
+    // 多表联查
     tieziLists.push(zi);
-
+    
     ba.tiezis = tieziLists;
     this.tieba.save(ba);
-    
+
+    usr.tiezis = tieziLists;
+    this.user.save(usr);
+
     return {
       message: '帖子创建成功',
       code: 200
@@ -41,8 +61,26 @@ export class TieziService {
     return `This action returns all tiezi`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tiezi`;
+  async randomTieziTB(tiebaId: number) {
+
+    const id = 10;
+
+    // 截取最新的十条ctiebaId为"tiebaId"的数据
+    let datalist = await this.tiezi.createQueryBuilder()
+    .where('tiezi.ctieBaId = :tiebaId', {tiebaId})
+    .orderBy('tiezi.createTimeTiezi', 'DESC')
+    .limit(10)
+    .getMany();
+
+    // 在最新的十条里随机获取其中一条
+    const data = datalist[Math.floor(Math.random() * 10)];
+    
+    // console.log(data.createTimeTiezi);
+    
+    return {
+      data,
+      code: 200
+    };
   }
 
   update(id: number, updateTieziDto: UpdateTieziDto) {
