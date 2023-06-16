@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, BadRequestException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, BadRequestException, UseGuards, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
@@ -48,6 +48,13 @@ export class AuthController {
     return this.authService.getUserTiezi(req.user);
   }
 
+  // 登录后判断是否点赞
+  @ApiOperation({summary: '根据token获取当前用户是否点赞', description: '传入用户ID和帖子ID，返回true or false'})
+  @UseGuards(JwtAuthGuard)
+  @Get('authIsLike')
+  authIsLike(@Query() data){
+    return this.authService.authIsLike(Number(data.user_id), Number(data.post_id));
+  }
 
   // 更新token
 }

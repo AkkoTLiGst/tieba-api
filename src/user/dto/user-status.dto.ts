@@ -3,6 +3,7 @@ import { Tiezi } from "src/tiezi/entities/tiezi.entity";
 export interface UserStatusDTO {
   username: string;
   id: number;
+  userId: string;
   email: string;
   photoUser: string;
   tiezis: Tiezi[];

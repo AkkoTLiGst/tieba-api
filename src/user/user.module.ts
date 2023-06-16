@@ -7,9 +7,10 @@ import { MulterModule } from '@nestjs/platform-express'
 import { diskStorage } from 'multer';
 import { extname, join } from 'path'
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
+import { Star } from './entities/star.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Tiezi]),
+  imports: [TypeOrmModule.forFeature([User, Tiezi, Star]),
   MulterModule.register({
     storage: diskStorage({
       destination: join(__dirname, '../images/user'),

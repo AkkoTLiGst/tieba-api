@@ -4,12 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Star } from './entities/star.entity';
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly user: Repository<User>,
+    @InjectRepository(Star) private readonly star: Repository<Star>,
     @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>
   ) { }
 
@@ -55,6 +57,42 @@ export class UserService {
       where: { email },
 
     })
+  }
+
+  // 点赞
+  async like(user_id: number, post_id: number) {
+    /// star表更新用户帖子对应关系
+    const data = new Star();
+    data.post_id = post_id;
+    data.user_id = user_id;
+    this.star.save(data);
+
+    // 对应帖子点赞数++
+    const post = await this.tiezi.findOne({ where: { id: post_id } });
+    post.thumbUp = ++post.thumbUp;
+    this.tiezi.update(post_id, post);
+    
+    return {
+      message: '点赞成功',
+      code: 200
+    }
+  }
+
+  // 获取是否点赞
+ async isLike(user_id: number, post_id: number){
+    const data = await this.star.find({where: {user_id}});
+    let isLike = false;
+
+    if(data){
+      for(let i = 0; i < data.length; i++){
+      
+        if(data[i].post_id === post_id){
+          isLike = true
+        }
+      }
+    }
+
+    return {isLike};
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

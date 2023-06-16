@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Put, Request, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,11 +19,11 @@ export class UserController {
   findOneByUId(@Param('userId') userId: string) {
     return this.userService.findOneByUID(userId);
   }
-  
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  // 点赞
+  @Put('like')
+  like(@Body() data){
+    return this.userService.like(data.user_id, data.post_id);
   }
 
   @Delete(':id')

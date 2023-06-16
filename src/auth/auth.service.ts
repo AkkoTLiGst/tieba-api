@@ -53,6 +53,7 @@ export class AuthService {
 
     const sanitizedUser = {
       id: user.id,
+      userId: user.userId,
       username: user.userName,
       email: user.email,
       photoUser: user.photoUser,
@@ -60,9 +61,12 @@ export class AuthService {
     }
 
     return sanitizedUser;
-
   }
 
+  async authIsLike(user_id: number, post_id: number){
+    const data = await this.userService.isLike(user_id, post_id);
+    return data;
+  }
 
   // 登录接口
   async login(userInfo: UserStatusDTO) {
@@ -78,8 +82,8 @@ export class AuthService {
   }
 
   // 创建token
-  createToken({ username, id: userId, photoUser, email }: UserStatusDTO, tiezisID) {
-    const token = this.jwtService.sign({ username, userId, photoUser, email, tiezisID });
+  createToken({ username, id, userId, photoUser, email }: UserStatusDTO, tiezisID) {
+    const token = this.jwtService.sign({ username, userId, id, photoUser, email, tiezisID });
     const expires = process.env.expiresTime;
 
     return {
