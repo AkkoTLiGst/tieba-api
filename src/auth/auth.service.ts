@@ -27,15 +27,15 @@ export class AuthService {
       throw new BadRequestException('user is required!');
     }
 
-    
+
     if (type === "email") {
       // 数据库查找user
       const user = await this.userService.findOneByEmial(needFind);
       return this.returnInfo(user, password);
-    }else if(type === 'mobile'){
+    } else if (type === 'mobile') {
       const user = await this.userService.findOneByMobile(needFind);
       return this.returnInfo(user, password);
-    }else if(type === 'userId'){
+    } else if (type === 'userId') {
       const user = await this.userService.findOneByUID(needFind);
       return this.returnInfo(user, password);
     }
@@ -63,15 +63,26 @@ export class AuthService {
     return sanitizedUser;
   }
 
-  async authIsLike(user_id: number, post_id: number){
+  async authIsLike(user_id: number, post_id: number) {
     const data = await this.userService.isLike(user_id, post_id);
     return data;
+  }
+
+  async authLike(user_id: number, post_id: number, code: string) {
+    if (code === 'like') {
+      const data = await this.userService.like(user_id, post_id);
+      return data;
+    } else if (code === 'unlike') {
+      const data = await this.userService.unLike(user_id, post_id);
+    } else {
+      return '错误，可能没有传递code'
+    }
   }
 
   // 登录接口
   async login(userInfo: UserStatusDTO) {
     const tiezisID = [];
-    for(let i = 0; i < userInfo.tiezis.length; i++){
+    for (let i = 0; i < userInfo.tiezis.length; i++) {
       tiezisID.push(userInfo.tiezis[i].id);
     }
 
@@ -93,11 +104,11 @@ export class AuthService {
   }
 
   // 获取用户的所有帖子id
-  async getUserTiezi(user: UserStatusDTO){
-    const data = await this.userService.findOneByEmial(user.email);
-    
+  async getUserTiezi(user: UserStatusDTO) {
+    const data = await this.userService.findUserTiezi(user.userId);
+
     const tiezisID = [];
-    for(let i = 0; i < data.tiezis.length; i++){
+    for (let i = 0; i < data.tiezis.length; i++) {
       tiezisID.push(data.tiezis[i].id);
     }
     return tiezisID;

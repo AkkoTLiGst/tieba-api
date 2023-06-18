@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm'
 import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 
 @Entity()
 export class Tiezi {
@@ -46,5 +47,9 @@ export class Tiezi {
     @ManyToOne(() => Tieba, (tieba) => tieba.tiezis)
     @JoinColumn()
     tieba: Tieba;
+
+    // 多表联查——评论
+    @OneToMany(() => Comment, (commnet) => commnet.tiezi)
+    comment: Comment[];
 
 }

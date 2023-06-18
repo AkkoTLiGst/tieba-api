@@ -39,23 +39,27 @@ export class UserService {
 
   findOneByUID(userId: string) {
     return this.user.findOne({
-      relations: ['tiezis'],
       where: { userId }
     });
   }
 
   findOneByMobile(mobile: string) {
     return this.user.findOne({
-      relations: ['tiezis'],
       where: { mobile }
     });
   }
 
   findOneByEmial(email: string) {
     return this.user.findOne({
-      relations: ['tiezis'],
       where: { email },
 
+    })
+  }
+
+  findUserTiezi(userId: string){
+    return this.user.findOne({
+      relations: ['tiezis'],
+      where: {userId}
     })
   }
 
@@ -76,6 +80,24 @@ export class UserService {
       message: '点赞成功',
       code: 200
     }
+  }
+
+  // 取消点赞
+  async unLike(user_id: number, post_id:number){
+    const data = await this.star.findOne({where: {user_id, post_id}});
+    this.star.delete(data);
+
+    const post = await this.tiezi.findOne({where: {id: post_id}});
+    if(post.thumbUp > 0){
+      post.thumbUp = --post.thumbUp;
+    }
+    this.tiezi.update(post_id, post);
+
+
+    return {
+      message: '取消点赞成功',
+      code: 200
+    };
   }
 
   // 获取是否点赞

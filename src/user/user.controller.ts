@@ -20,12 +20,6 @@ export class UserController {
     return this.userService.findOneByUID(userId);
   }
 
-  // 点赞
-  @Put('like')
-  like(@Body() data){
-    return this.userService.like(data.user_id, data.post_id);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

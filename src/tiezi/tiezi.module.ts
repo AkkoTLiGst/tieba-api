@@ -8,9 +8,10 @@ import { MulterModule } from '@nestjs/platform-express'
 import { diskStorage } from 'multer';
 import { extname, join } from 'path'
 import { User } from 'src/user/entities/user.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tiezi, Tieba, User]),
+  imports: [TypeOrmModule.forFeature([Tiezi, Tieba, User, Comment]),
   // 创建存储文件目录
   MulterModule.register({
     storage: diskStorage({
