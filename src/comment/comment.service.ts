@@ -56,12 +56,12 @@ export class CommentService {
     }
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  async findOneByTiezi(id: number) {
+    return await this.comment.findOne({where: {id}});
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  
+  async findOneByUser(id: number) {
+    return await this.comment.findOne({where: {id}});
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {

@@ -81,20 +81,15 @@ export class AuthService {
 
   // 登录接口
   async login(userInfo: UserStatusDTO) {
-    const tiezisID = [];
-    for (let i = 0; i < userInfo.tiezis.length; i++) {
-      tiezisID.push(userInfo.tiezis[i].id);
-    }
-
-    const token = this.createToken(userInfo, tiezisID);
+    const token = this.createToken(userInfo);
     return {
       ...token
     }
   }
 
   // 创建token
-  createToken({ username, id, userId, photoUser, email }: UserStatusDTO, tiezisID) {
-    const token = this.jwtService.sign({ username, userId, id, photoUser, email, tiezisID });
+  createToken({ username, id, userId, photoUser, email }: UserStatusDTO) {
+    const token = this.jwtService.sign({ username, userId, id, photoUser, email });
     const expires = process.env.expiresTime;
 
     return {
@@ -112,6 +107,10 @@ export class AuthService {
       tiezisID.push(data.tiezis[i].id);
     }
     return tiezisID;
+  }
 
+  // 登录后关注贴吧
+  async authFollowTieba(user_id: number, tieba_id: number){
+    return await this.userService.followTieba(user_id, tieba_id)
   }
 }

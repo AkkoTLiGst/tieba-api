@@ -9,9 +9,10 @@ import { extname, join } from 'path'
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
 import { Star } from './entities/star.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
+import { Tieba } from 'src/tiebas/entities/tieba.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Tiezi, Star, Comment]),
+  imports: [TypeOrmModule.forFeature([User, Tiezi, Star, Comment, Tieba]),
   MulterModule.register({
     storage: diskStorage({
       destination: join(__dirname, '../images/user'),

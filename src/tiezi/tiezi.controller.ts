@@ -25,6 +25,12 @@ export class TieziController {
     return this.tieziService.randomTieziTB(tiebaId);
   }
 
+  // 
+  @Get('findAllCommentId')
+  findAllCommentId(@Query() data){
+    return this.tieziService.findAllCommentId(data.id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTieziDto: UpdateTieziDto) {
     return this.tieziService.update(+id, updateTieziDto);

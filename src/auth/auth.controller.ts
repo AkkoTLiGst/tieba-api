@@ -65,5 +65,15 @@ export class AuthController {
     return this.authService.authIsLike(Number(data.user_id), Number(data.post_id));
   }
 
+  
+
+  // 传入用户ID和贴吧ID
+  @ApiOperation({summary: '根据token关注贴吧', description: '传入用户ID和帖子ID，返回是否关注成功'})
+  @UseGuards(JwtAuthGuard)
+  @Post('followTieba')
+  followTieba(@Body() data){
+    return this.authService.authFollowTieba(data.user_id, data.tieba_id)
+  }
+
   // 更新token
 }

@@ -8,13 +8,15 @@ import { Tiezi } from './entities/tiezi.entity';
 import { tieziLists } from 'src/variable';
 import { User } from 'src/user/entities/user.entity';
 import { searchTiezi } from 'src/types/types';
+import { Comment } from 'src/comment/entities/comment.entity';
 
 @Injectable()
 export class TieziService {
   constructor(
     @InjectRepository(Tieba) private readonly tieba: Repository<Tieba>,
     @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>,
-    @InjectRepository(User) private readonly user: Repository<User>
+    @InjectRepository(User) private readonly user: Repository<User>,
+    @InjectRepository(Comment) private readonly commnet: Repository<Comment>
   ) { }
 
   async create(createTieziDto: CreateTieziDto, file) {
@@ -61,7 +63,7 @@ export class TieziService {
 
   getTieziById(data: searchTiezi) {
     return this.tiezi.findOne({
-      where: {id: data.tieziID}
+      where: { id: data.tieziID }
     });
   }
 
@@ -81,11 +83,25 @@ export class TieziService {
       // 如果大于十条，在最新的十条里随机获取其中一条
       data = datalist[Math.floor(Math.random() * 10)];
     }
-
-
-    // console.log(data.createTimeTiezi);
-
     return data;
+  }
+
+  // 通过帖子ID获取帖子对应所有评论的id
+  async findAllCommentId(tieziId: number) {
+    try {
+      const allCom = await this.tiezi.findOne({ where: { id: tieziId }, relations: ['comment'] });
+
+      const arr = [];
+
+      for (let i = 0; i < allCom.comment.length; i++) {
+        arr.push(allCom.comment[i].id);
+      }
+      console.log(arr);
+      
+      return arr;
+    } catch (error) {
+      return error
+    }
   }
 
   update(id: number, updateTieziDto: UpdateTieziDto) {

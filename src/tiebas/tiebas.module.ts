@@ -7,11 +7,12 @@ import { MulterModule } from '@nestjs/platform-express'
 import { diskStorage } from 'multer';
 import { extname, join } from 'path'
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Tieba, Tiezi]),
+    TypeOrmModule.forFeature([Tieba, Tiezi, User]),
     // 创建存储文件目录
     MulterModule.register({
       storage: diskStorage({

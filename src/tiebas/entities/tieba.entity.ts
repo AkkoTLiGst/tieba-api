@@ -1,5 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany} from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToMany} from 'typeorm'
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Tieba {
@@ -28,4 +29,8 @@ export class Tieba {
     // 多表联查——帖子
     @OneToMany(() => Tiezi, (tiezi) => tiezi.tieba)
     tiezis: Tiezi[];
+
+    // 用户
+    @ManyToMany(() => User, (user) => user.tieba)
+    user: User;
 }
