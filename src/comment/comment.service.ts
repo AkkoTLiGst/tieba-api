@@ -19,7 +19,7 @@ export class CommentService {
   async create(createCommentDto: CreateCommentDto, file) {
     try {
       const com = new Comment(); // 评论数据库
-      const usr = await this.user.findOne({ where: { userId: createCommentDto.userId } }); // 用户
+      const usr = await this.user.findOne({ where: { id: createCommentDto.userId } }); // 用户
       const tz = await this.tiezi.findOne({ where: { id: createCommentDto.tieziId } }); // 帖子
 
       // 评论信息
@@ -41,11 +41,12 @@ export class CommentService {
       this.user.save(usr);
       // 更新帖子 
       tz.comment = commentList;
+      tz.commentsNum = tz.commentsNum + 1;
       this.tiezi.save(tz);
-
 
       return {
         message: '评论创建成功',
+        id: com.id,
         code: 200
       }
     } catch (error) {
@@ -56,8 +57,16 @@ export class CommentService {
     }
   }
 
+  // 上传图片
+  async uploadImg(id:number, filename){
+    const com = await this.comment.findOne({where: {id}});
+    com.tieziImg = filename;
+    this.comment.save(com);
+    return {message: '上传成功'}
+  }
+
   async findOneByTiezi(id: number) {
-    return await this.comment.findOne({where: {id}});
+    return await this.comment.findOne({where: {id}, relations: ['user']});
   }
   
   async findOneByUser(id: number) {

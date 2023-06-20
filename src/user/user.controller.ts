@@ -20,6 +20,12 @@ export class UserController {
     return this.userService.findOneByUID(userId);
   }
 
+  // 通过ID获取用户信息
+  @Get('findById')
+  findById(@Query() data){
+    return this.userService.findOneById(data.id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

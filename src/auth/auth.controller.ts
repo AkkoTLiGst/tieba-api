@@ -75,5 +75,13 @@ export class AuthController {
     return this.authService.authFollowTieba(data.user_id, data.tieba_id)
   }
 
+  // 获取用户关注的贴吧
+  @ApiOperation({summary: '根据token获取关注的贴吧', description: '传入用户ID'})
+  @UseGuards(JwtAuthGuard)
+  @Get('authUserTieba')
+  authUserTieba(@Query() data){
+    return this.authService.authUserTieba(data.user_id);
+  }
+
   // 更新token
 }

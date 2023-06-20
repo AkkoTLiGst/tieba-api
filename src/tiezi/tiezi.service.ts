@@ -96,7 +96,6 @@ export class TieziService {
       for (let i = 0; i < allCom.comment.length; i++) {
         arr.push(allCom.comment[i].id);
       }
-      console.log(arr);
       
       return arr;
     } catch (error) {

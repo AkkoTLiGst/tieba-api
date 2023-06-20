@@ -3,7 +3,7 @@ export class CreateCommentDto {
 
     floor: number; // 楼层数
 
-    userId: string; // 创建者用户名
+    userId: number; // 创建者用户名
 
     tieziId: number; // 帖子的id
 }

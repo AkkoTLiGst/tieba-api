@@ -113,4 +113,17 @@ export class AuthService {
   async authFollowTieba(user_id: number, tieba_id: number){
     return await this.userService.followTieba(user_id, tieba_id)
   }
+
+  // 获取用户关注的所有贴吧
+  async authUserTieba(user: UserStatusDTO){
+    const data  = await this.userService.findUserTieba(user.id);
+    const tiebaId = [];
+    for(let i = 0; i< data.tieba.length; i++){
+      tiebaId.push({
+        name: data.tieba[i].tiebaName,
+        photoName: data.tieba[i].photoTieba
+      });
+    }
+    return tiebaId;
+  }
 }

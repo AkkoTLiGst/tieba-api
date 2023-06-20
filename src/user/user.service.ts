@@ -45,7 +45,7 @@ export class UserService {
     }
   }
 
-  // 查询三兄弟：通过用户名、手机号、email查询
+  // 查询四兄弟：通过用户名、手机号、email、ID查询
   findOneByUID(userId: string) {
     return this.user.findOne({
       where: { userId }
@@ -62,11 +62,25 @@ export class UserService {
 
     })
   }
+  findOneById(id: number) {
+    return this.user.findOne({
+      where: { id },
+
+    })
+  }
   // 查询用户信息包括所有帖子
   findUserTiezi(userId: string) {
     return this.user.findOne({
       relations: ['tiezis'],
       where: { userId }
+    })
+  }
+
+  // 查询用户信息包括关注的所有贴吧
+  findUserTieba(id: number) {
+    return this.user.findOne({
+      relations: ['tieba'],
+      where: { id }
     })
   }
 
