@@ -26,12 +26,16 @@ export class Comment {
     @Column()
     floor: number;
 
-    // 发表人
+    // 评论者
+    createrId: number;
+
+    // 对应帖子ID
+    tieziId: number;
+
     @ManyToOne(() => User, (user) => user.comment)
     @JoinColumn()
     user: User;
 
-    // 对应帖子
     @ManyToOne(() => Tiezi, (tiezi) => tiezi.comment)
     @JoinColumn()
     tiezi: Tiezi;

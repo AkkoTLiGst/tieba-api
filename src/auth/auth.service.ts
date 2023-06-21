@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt'
 import { User } from 'src/user/entities/user.entity';
+import { log } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -101,6 +102,8 @@ export class AuthService {
   // 获取用户的所有帖子id
   async getUserTiezi(user: UserStatusDTO) {
     const data = await this.userService.findUserTiezi(user.userId);
+    console.log(data);
+    
 
     const tiezisID = [];
     for (let i = 0; i < data.tiezis.length; i++) {

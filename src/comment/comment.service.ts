@@ -22,6 +22,9 @@ export class CommentService {
       const usr = await this.user.findOne({ where: { id: createCommentDto.userId } }); // 用户
       const tz = await this.tiezi.findOne({ where: { id: createCommentDto.tieziId } }); // 帖子
 
+      if (!usr) return { message: "用户id不存在" };
+      if (!tz) return { message: "帖子id不存在" };
+
       // 评论信息
       com.comment = createCommentDto.comment;
       com.floor = createCommentDto.floor;
@@ -34,15 +37,35 @@ export class CommentService {
       }
       await this.comment.save(com);
 
-      // 多表联查
-      commentList.push(com);
-      // 更新用户
-      usr.comment = commentList;
-      this.user.save(usr);
-      // 更新帖子 
-      tz.comment = commentList;
-      tz.commentsNum = tz.commentsNum + 1;
-      this.tiezi.save(tz);
+      // commentList存放评论数据、用户ID、帖子ID
+      commentList.push({ com: com, userId: createCommentDto.userId, tieziId: createCommentDto.tieziId });
+      const userComList = []; // 用于存放用户和评论的关系表
+      const postComList = []; // 用于存放帖子和评论的关系表
+      for (let i = 0; i < commentList.length; i++) {
+        // 遍历commList数组，如果数组中某一个对象的userId等于创建帖子的用户ID，
+        // 就将这个对象中评论的具体内容压入userComList，然后再将userComList保存到对应的user表中
+        if (commentList[i].userId === createCommentDto.userId) {
+          userComList.push(commentList[i].com);
+        }
+        // postComList同userComList
+        if (commentList[i].tieziId === createCommentDto.tieziId) {
+          postComList.push(commentList[i].com);
+        }
+      }
+
+      // 不指定id是创建新的用户，还需要填写username和password等必填的字段
+      // 指定id就是更新某些字段：只更新数据
+      const userEntity = new User();
+      userEntity.id = Number(createCommentDto.userId);
+      userEntity.comment = userComList;
+      await this.user.save(userEntity);
+
+      const tieziEntity = new Tiezi();
+      tieziEntity.id = Number(createCommentDto.tieziId);
+      tieziEntity.comment = postComList;
+      tieziEntity.commentsNum = tz.commentsNum + 1; // 增加评论的数量
+      await this.tiezi.save(tieziEntity);
+
 
       return {
         message: '评论创建成功',
@@ -58,19 +81,19 @@ export class CommentService {
   }
 
   // 上传图片
-  async uploadImg(id:number, filename){
-    const com = await this.comment.findOne({where: {id}});
+  async uploadImg(id: number, filename) {
+    const com = await this.comment.findOne({ where: { id } });
     com.tieziImg = filename;
     this.comment.save(com);
-    return {message: '上传成功'}
+    return { message: '上传成功' }
   }
 
   async findOneByTiezi(id: number) {
-    return await this.comment.findOne({where: {id}, relations: ['user']});
+    return await this.comment.findOne({ where: { id }, relations: ['user'] });
   }
-  
+
   async findOneByUser(id: number) {
-    return await this.comment.findOne({where: {id}});
+    return await this.comment.findOne({ where: { id } });
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {

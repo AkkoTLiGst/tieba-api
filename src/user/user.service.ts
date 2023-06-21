@@ -140,7 +140,7 @@ export class UserService {
 
   // 关注贴吧
   async followTieba(user_id: number, tieba_id: number) {
-    try {
+    // try {
       followTiebaList.push(tieba_id);
 
       const usr = await this.user.findOne({ where: { id: user_id } });
@@ -168,9 +168,9 @@ export class UserService {
           code: 200
         }
       }
-    } catch (error) {
-      return error;
-    }
+    // } catch (error) {
+    //   return error;
+    // }
   }
 
   remove(id: number) {

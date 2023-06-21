@@ -24,6 +24,9 @@ export class TieziService {
     const ba = await this.tieba.findOne({ where: { id: createTieziDto.ctieBaId } }); // 吧
     const usr = await this.user.findOne({ where: { id: createTieziDto.createrId } }); // 用户
 
+    if (!usr) return { message: "用户id不存在" };
+    if (!ba) return { message: "吧id不存在" };
+
 
     // 创建帖子信息
     zi.createrId = createTieziDto.createrId;
@@ -45,15 +48,28 @@ export class TieziService {
     // 保存到数据库
     await this.tiezi.save(zi);
 
-    // 多表联查
-    tieziLists.push(zi);
+    tieziLists.push({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
+    const userTzList = [];
+    const baTzList = [];
+    for (let i = 0; i < tieziLists.length; i++) {
+      if (tieziLists[i].userId === createTieziDto.createrId) {
+        userTzList.push(tieziLists[i].tiezi);
+      }
+      if (tieziLists[i].baId === createTieziDto.ctieBaId) {
+        baTzList.push(tieziLists[i].tiezi);
+      }
+    }
 
-    ba.tiezis = tieziLists;
-    this.tieba.save(ba);
 
-    usr.tiezis = tieziLists;
-    this.user.save(usr);
-    // console.log(tieziLists);
+    const userEntity = new User();
+    userEntity.id = Number(createTieziDto.createrId);
+    userEntity.tiezis = userTzList;
+    await this.user.save(userEntity);
+
+    const baEntity = new Tieba();
+    baEntity.id = Number(createTieziDto.ctieBaId);
+    baEntity.tiezis = baTzList;
+    await this.tieba.save(baEntity);
 
     return {
       message: '帖子创建成功',
@@ -96,7 +112,7 @@ export class TieziService {
       for (let i = 0; i < allCom.comment.length; i++) {
         arr.push(allCom.comment[i].id);
       }
-      
+
       return arr;
     } catch (error) {
       return error
