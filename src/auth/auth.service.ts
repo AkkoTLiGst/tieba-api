@@ -102,8 +102,6 @@ export class AuthService {
   // 获取用户的所有帖子id
   async getUserTiezi(user: UserStatusDTO) {
     const data = await this.userService.findUserTiezi(user.userId);
-    console.log(data);
-    
 
     const tiezisID = [];
     for (let i = 0; i < data.tiezis.length; i++) {
@@ -113,20 +111,32 @@ export class AuthService {
   }
 
   // 登录后关注贴吧
-  async authFollowTieba(user_id: number, tieba_id: number){
+  async authFollowTieba(user_id: number, tieba_id: number) {
     return await this.userService.followTieba(user_id, tieba_id)
   }
 
   // 获取用户关注的所有贴吧
-  async authUserTieba(user: UserStatusDTO){
-    const data  = await this.userService.findUserTieba(user.id);
+  async authUserTieba(user: UserStatusDTO) {
+    const data = await this.userService.findUserTieba(user.id);
     const tiebaId = [];
-    for(let i = 0; i< data.tieba.length; i++){
+    for (let i = 0; i < data.tieba.length; i++) {
       tiebaId.push({
         name: data.tieba[i].tiebaName,
-        photoName: data.tieba[i].photoTieba
+        photoName: data.tieba[i].photoTieba,
+        id: data.tieba[i].id
       });
     }
     return tiebaId;
+  }
+
+  // 判断用户是否关注当前贴吧
+  async isSubscribe(user: UserStatusDTO, tiebaId: number) {
+    const data = await this.userService.findUserTieba(user.id);
+    for (let i = 0; i < data.tieba.length; i++) {
+      if (Number(tiebaId) === data.tieba[i].id) {
+        return { data: true };
+      }
+    }
+    return { data: false }
   }
 }

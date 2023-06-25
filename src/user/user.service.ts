@@ -140,8 +140,8 @@ export class UserService {
 
   // 关注贴吧
   async followTieba(user_id: number, tieba_id: number) {
-    // try {
-      followTiebaList.push(tieba_id);
+    try {
+      followTiebaList.push({ tieba_id, user_id });
 
       const usr = await this.user.findOne({ where: { id: user_id } });
       if (!usr) return { message: "用户id不存在" };
@@ -150,9 +150,11 @@ export class UserService {
         const followList = [];
 
         for (let i = 0; i < followTiebaList.length; i++) {
-          const tb = await this.tieba.findOne({ where: { id: followTiebaList[i] } });
-          if (!tb) return { message: "贴吧id不存在" };
-          followList.push(tb);
+          if (followTiebaList[i].user_id === user_id) {
+            const tb = await this.tieba.findOne({ where: { id: followTiebaList[i].tieba_id } });
+            if (!tb) return { message: "贴吧id不存在" };
+            followList.push(tb);
+          }
         }
 
         // 重点：
@@ -168,9 +170,9 @@ export class UserService {
           code: 200
         }
       }
-    // } catch (error) {
-    //   return error;
-    // }
+    } catch (error) {
+      return error;
+    }
   }
 
   remove(id: number) {

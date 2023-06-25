@@ -9,6 +9,7 @@ import { tieziLists } from 'src/variable';
 import { User } from 'src/user/entities/user.entity';
 import { searchTiezi } from 'src/types/types';
 import { Comment } from 'src/comment/entities/comment.entity';
+import { IdArrayService } from 'src/id-array/id-array.service';
 
 @Injectable()
 export class TieziService {
@@ -16,7 +17,8 @@ export class TieziService {
     @InjectRepository(Tieba) private readonly tieba: Repository<Tieba>,
     @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>,
     @InjectRepository(User) private readonly user: Repository<User>,
-    @InjectRepository(Comment) private readonly commnet: Repository<Comment>
+    @InjectRepository(Comment) private readonly commnet: Repository<Comment>,
+    private readonly idArrayService: IdArrayService
   ) { }
 
   async create(createTieziDto: CreateTieziDto, file) {
@@ -49,6 +51,10 @@ export class TieziService {
     await this.tiezi.save(zi);
 
     tieziLists.push({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
+    this.idArrayService.createTiezisLists({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
+    const lists = await this.idArrayService.findAllTiezisLists();
+    
+
     const userTzList = [];
     const baTzList = [];
     for (let i = 0; i < tieziLists.length; i++) {
@@ -116,6 +122,32 @@ export class TieziService {
       return arr;
     } catch (error) {
       return error
+    }
+  }
+
+  // 获取对应贴吧的所有帖子
+  async findAllPost(tiebaId: number, page: number, pageSize: number) {
+    const data = await this.tiezi.find({
+      where: { ctieBaId: tiebaId },
+      order: { id: 'DESC' },
+      skip: (page - 1) * pageSize, // 设置偏移量
+      take: pageSize // 设置分页
+    });
+
+    return {
+      data: data,
+      code: 200,
+      message: '查询成功，返回帖子数组'
+    }
+  }
+
+  // 获取对应贴吧的帖子数量
+  async findPostCount(tiebaId: number) {
+    const data = await this.tiezi.count({ where: { ctieBaId: tiebaId } });
+    return {
+      data,
+      code: 200,
+      message: '总数查询成功'
     }
   }
 

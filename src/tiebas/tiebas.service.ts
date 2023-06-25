@@ -47,8 +47,6 @@ export class TiebasService {
     return data
   }
 
-
-
   async findCount() {
     const data = await this.tieba.count();
     // console.log(data);

@@ -9,9 +9,11 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path'
 import { User } from 'src/user/entities/user.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
+import { IdArrayService } from 'src/id-array/id-array.service';
+import { TieziLists } from 'src/id-array/entities/tieziLists.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tiezi, Tieba, User, Comment]),
+  imports: [TypeOrmModule.forFeature([Tiezi, Tieba, User, Comment, TieziLists]),
   // 创建存储文件目录
   MulterModule.register({
     storage: diskStorage({
@@ -25,6 +27,6 @@ import { Comment } from 'src/comment/entities/comment.entity';
   })
   ],
   controllers: [TieziController],
-  providers: [TieziService]
+  providers: [TieziService, IdArrayService]
 })
 export class TieziModule { }

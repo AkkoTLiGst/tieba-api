@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { TiebasService } from './tiebas.service';
 import { CreateTiebaDto } from './dto/create-tieba.dto';
 import { UpdateTiebaDto } from './dto/update-tieba.dto';
@@ -6,7 +6,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('tiebas')
 export class TiebasController {
-  constructor(private readonly tiebasService: TiebasService) {}
+  constructor(private readonly tiebasService: TiebasService) { }
 
   @Post('create')
   @UseInterceptors(FileInterceptor('file'))
@@ -18,18 +18,17 @@ export class TiebasController {
   @Get('tiebaByName/:tiebaName')
   findOneByName(@Param('tiebaName') tiebaName: string) {
     return this.tiebasService.findOneByName(tiebaName);
-    
+
   }
 
   // 通过吧ID获取贴吧信息
   @Get('tiebaById/:id')
   findOneById(@Param('id') id: string) {
     return this.tiebasService.findOneByID(+id);
-    
   }
 
   @Get('count')
-  findCount(){
+  findCount() {
     return this.tiebasService.findCount();
   }
 
