@@ -54,7 +54,6 @@ export class TieziService {
     this.idArrayService.createTiezisLists({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
     const lists = await this.idArrayService.findAllTiezisLists();
     
-
     const userTzList = [];
     const baTzList = [];
     for (let i = 0; i < tieziLists.length; i++) {
