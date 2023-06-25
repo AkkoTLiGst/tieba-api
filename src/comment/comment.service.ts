@@ -6,7 +6,7 @@ import { Comment } from './entities/comment.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
-import { commentList } from 'src/variable';
+import { IdArrayService } from 'src/id-array/id-array.service';
 
 @Injectable()
 export class CommentService {
@@ -14,6 +14,7 @@ export class CommentService {
     @InjectRepository(Comment) private readonly comment: Repository<Comment>,
     @InjectRepository(User) private readonly user: Repository<User>,
     @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>,
+    private readonly IdArrayService: IdArrayService
   ) { }
 
   async create(createCommentDto: CreateCommentDto, file) {
@@ -37,19 +38,21 @@ export class CommentService {
       }
       await this.comment.save(com);
 
-      // commentList存放评论数据、用户ID、帖子ID
-      commentList.push({ com: com, userId: createCommentDto.userId, tieziId: createCommentDto.tieziId });
+      // commentLists存放评论ID、用户ID、帖子ID
+      const lists = await this.IdArrayService.createCommentLists({ commentId: com.id, userId: createCommentDto.userId, tieziId: createCommentDto.tieziId });
       const userComList = []; // 用于存放用户和评论的关系表
       const postComList = []; // 用于存放帖子和评论的关系表
-      for (let i = 0; i < commentList.length; i++) {
+      for (let i = 0; i < lists.length; i++) {
         // 遍历commList数组，如果数组中某一个对象的userId等于创建帖子的用户ID，
         // 就将这个对象中评论的具体内容压入userComList，然后再将userComList保存到对应的user表中
-        if (commentList[i].userId === createCommentDto.userId) {
-          userComList.push(commentList[i].com);
+        if (lists[i].userId === Number(createCommentDto.userId)) {
+          const data = await this.comment.findOne({where: {id: lists[i].commentId}});
+          userComList.push(data);
         }
         // postComList同userComList
-        if (commentList[i].tieziId === createCommentDto.tieziId) {
-          postComList.push(commentList[i].com);
+        if (lists[i].tieziId === Number(createCommentDto.tieziId)) {
+          const data = await this.comment.findOne({where: {id: lists[i].commentId}});
+          postComList.push(data);
         }
       }
 

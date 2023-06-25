@@ -8,6 +8,7 @@ import { Star } from './entities/star.entity';
 import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
 import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { followTiebaList } from 'src/variable';
+import { IdArrayService } from 'src/id-array/id-array.service';
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,7 @@ export class UserService {
     @InjectRepository(Star) private readonly star: Repository<Star>,
     @InjectRepository(Tiezi) private readonly tiezi: Repository<Tiezi>,
     @InjectRepository(Tieba) private readonly tieba: Repository<Tieba>,
+    private readonly idArryService: IdArrayService
   ) { }
 
   create(createUserDto: CreateUserDto, file) {
@@ -141,17 +143,17 @@ export class UserService {
   // 关注贴吧
   async followTieba(user_id: number, tieba_id: number) {
     try {
-      followTiebaList.push({ tieba_id, user_id });
+      const lists = await this.idArryService.createFollowTiebaLists({userId: user_id, tiebaId: tieba_id});
 
       const usr = await this.user.findOne({ where: { id: user_id } });
       if (!usr) return { message: "用户id不存在" };
 
-      if (followTiebaList.length !== 0) {
+      if (lists.length !== 0) {
         const followList = [];
 
-        for (let i = 0; i < followTiebaList.length; i++) {
-          if (followTiebaList[i].user_id === user_id) {
-            const tb = await this.tieba.findOne({ where: { id: followTiebaList[i].tieba_id } });
+        for (let i = 0; i < lists.length; i++) {
+          if (lists[i].userId === Number(user_id)) {
+            const tb = await this.tieba.findOne({ where: { id: lists[i].tiebaId }});
             if (!tb) return { message: "贴吧id不存在" };
             followList.push(tb);
           }

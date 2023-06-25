@@ -8,19 +8,24 @@ import { Comment } from './entities/comment.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path'
+import { IdArrayService } from 'src/id-array/id-array.service';
+import { CommentLists } from 'src/id-array/entities/commentLists.entity';
+import { IdArrayModule } from 'src/id-array/id-array.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Tiezi, Comment]),
-  MulterModule.register({
-    storage: diskStorage({
-      destination: join(__dirname, '../images/comment'),
+  imports: [
+    TypeOrmModule.forFeature([User, Tiezi, Comment, CommentLists]),
+    IdArrayModule,
+    MulterModule.register({
+      storage: diskStorage({
+        destination: join(__dirname, '../images/comment'),
 
-    filename: (_, file, callback) => {
-      const filename = `${new Date().getTime() + extname(file.originalname)}`
-      return callback(null, filename);
-    }
+        filename: (_, file, callback) => {
+          const filename = `${new Date().getTime() + extname(file.originalname)}`
+          return callback(null, filename);
+        }
+      })
     })
-  })
   ],
   controllers: [CommentController],
   providers: [CommentService]

@@ -1,16 +1,18 @@
+import { type } from 'os';
+import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm'
 
 @Entity()
-export class TieziLists {
+export class CommentLists {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    tieziId: number;
+    commentId: number;
 
     @Column()
     userId: number;
 
     @Column()
-    baId: number
+    tieziId: number
 }

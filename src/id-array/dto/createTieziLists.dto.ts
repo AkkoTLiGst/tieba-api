@@ -1,7 +1,5 @@
-import { Tiezi } from "src/tiezi/entities/tiezi.entity";
-
 export class CreateTieziLists {
-    tiezi: Tiezi;
+    tieziId: number;
 
     userId: number;
 

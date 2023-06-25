@@ -5,7 +5,6 @@ import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Tieba } from 'src/tiebas/entities/tieba.entity';
 import { Tiezi } from './entities/tiezi.entity';
-import { tieziLists } from 'src/variable';
 import { User } from 'src/user/entities/user.entity';
 import { searchTiezi } from 'src/types/types';
 import { Comment } from 'src/comment/entities/comment.entity';
@@ -50,18 +49,19 @@ export class TieziService {
     // 保存到数据库
     await this.tiezi.save(zi);
 
-    tieziLists.push({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
-    this.idArrayService.createTiezisLists({ tiezi: zi, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
-    const lists = await this.idArrayService.findAllTiezisLists();
-    
+    // 将帖子用户贴吧关系保存到lists中
+    const lists = await this.idArrayService.createTiezisLists({ tieziId: zi.id, userId: createTieziDto.createrId, baId: createTieziDto.ctieBaId });
+
     const userTzList = [];
     const baTzList = [];
-    for (let i = 0; i < tieziLists.length; i++) {
-      if (tieziLists[i].userId === createTieziDto.createrId) {
-        userTzList.push(tieziLists[i].tiezi);
+    for (let i = 0; i < lists.length; i++) {
+      if (lists[i].userId === Number(createTieziDto.createrId)) {
+        const data = await this.tiezi.findOne({ where: { id: lists[i].tieziId } });
+        userTzList.push(data)
       }
-      if (tieziLists[i].baId === createTieziDto.ctieBaId) {
-        baTzList.push(tieziLists[i].tiezi);
+      if (lists[i].baId === Number(createTieziDto.ctieBaId)) {
+        const data = await this.tiezi.findOne({ where: { id: lists[i].tieziId } });
+        baTzList.push(data)
       }
     }
 
