@@ -78,6 +78,38 @@ export class UserService {
     })
   }
 
+  // 获取非登录用户的所有帖子（不包括隐藏的帖子）
+  async findUserPost(userId: number, page: number, pageSize: number) {
+    const data = await this.tiezi.find({
+      where: { createrId: userId, isHidePost: false },
+      order: { id: 'DESC' },
+      skip: (page - 1) * pageSize, // 设置偏移量
+      take: pageSize // 设置分页
+    });
+
+    return {
+      data: data,
+      code: 200,
+      message: '查询成功，返回帖子数组'
+    }
+  }
+
+  // 获登录用户的所有帖子（包括隐藏的帖子）
+  async findLoginUserPost(userId: number, page: number, pageSize: number) {
+    const data = await this.tiezi.find({
+      where: { createrId: userId},
+      order: { id: 'DESC' },
+      skip: (page - 1) * pageSize, // 设置偏移量
+      take: pageSize // 设置分页
+    });
+
+    return {
+      data: data,
+      code: 200,
+      message: '查询成功，返回帖子数组'
+    }
+  }
+
   // 查询用户信息包括关注的所有贴吧
   findUserTieba(id: number) {
     return this.user.findOne({
@@ -143,7 +175,7 @@ export class UserService {
   // 关注贴吧
   async followTieba(user_id: number, tieba_id: number) {
     try {
-      const lists = await this.idArryService.createFollowTiebaLists({userId: user_id, tiebaId: tieba_id});
+      const lists = await this.idArryService.createFollowTiebaLists({ userId: user_id, tiebaId: tieba_id });
 
       const usr = await this.user.findOne({ where: { id: user_id } });
       if (!usr) return { message: "用户id不存在" };
@@ -153,7 +185,7 @@ export class UserService {
 
         for (let i = 0; i < lists.length; i++) {
           if (lists[i].userId === Number(user_id)) {
-            const tb = await this.tieba.findOne({ where: { id: lists[i].tiebaId }});
+            const tb = await this.tieba.findOne({ where: { id: lists[i].tiebaId } });
             if (!tb) return { message: "贴吧id不存在" };
             followList.push(tb);
           }

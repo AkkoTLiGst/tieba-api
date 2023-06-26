@@ -6,7 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const options = new DocumentBuilder().setTitle('这是接口文档').setDescription('描述....').setVersion('版本1').build();
+  const options = new DocumentBuilder().addBearerAuth().setTitle('贴吧接口文档').setDescription('描述....').setVersion('版本1').build();
   const document = SwaggerModule.createDocument(app, options); // 初始化文档
   SwaggerModule.setup('/api-docs', app, document); // 设置文档接口
 

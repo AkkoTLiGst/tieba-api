@@ -139,4 +139,11 @@ export class AuthService {
     }
     return { data: false }
   }
+
+  // 获登录用户的所有帖子（包括隐藏的帖子）
+  async authUserPosts(id: number, page: number, pageSize: number){
+    console.log(typeof id, typeof page, typeof pageSize);
+    
+    return await this.userService.findLoginUserPost(id, page, pageSize);
+  }
 }

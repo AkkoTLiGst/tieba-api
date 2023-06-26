@@ -38,6 +38,10 @@ export class Tiezi {
     @Column()
     commentsNum: number;
 
+    // 创建者是否隐藏当前的帖子
+    @Column()
+    isHidePost: boolean;
+
     // 多表联查——用户
     @ManyToOne(() => User, (user) => user.tiezis)
     @JoinColumn()
