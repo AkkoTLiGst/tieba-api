@@ -36,6 +36,11 @@ export class CreateUserDto {
     // 手机号
     mobile: string;
 
-    
+    @ApiProperty({
+        example: '我是一个一个一个',
+        type: String
+    })
+    // 用户简介
+    aboutMe: string;
 }
 

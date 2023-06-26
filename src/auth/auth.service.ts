@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt'
 import { User } from 'src/user/entities/user.entity';
 import { log } from 'console';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -55,14 +56,52 @@ export class AuthService {
     const sanitizedUser = {
       id: user.id,
       userId: user.userId,
-      username: user.userName,
+      userName: user.userName,
       email: user.email,
       photoUser: user.photoUser,
+      aboutMe: user.aboutMe,
       tiezis: user.tiezis
     }
 
     return sanitizedUser;
   }
+
+  // 登录接口
+  async login(userInfo: UserStatusDTO) {
+    const token = this.createToken(userInfo);
+    return {
+      ...token
+    }
+  }
+
+  // 创建token
+  createToken({ userName, id, userId, photoUser, email, aboutMe }: UserStatusDTO) {
+    const token = this.jwtService.sign({ userName, userId, id, photoUser, email, aboutMe });
+    const expires = process.env.expiresTime;
+
+    return {
+      token,
+      expires,
+    }
+  }
+
+  // 更新用户信息
+  authUpdateUser(updateUserDTo: UpdateUserDto){
+    return this.userService.updateUserInfo(updateUserDTo)
+  }
+ 
+  // 获取用户的所有帖子id
+  async getUserTiezi(user: UserStatusDTO) {
+    const data = await this.userService.findUserTiezi(user.userId);
+
+    const tiezisID = [];
+    for (let i = 0; i < data.tiezis.length; i++) {
+      tiezisID.push(data.tiezis[i].id);
+    }
+    return tiezisID;
+  }
+
+  
 
   async authIsLike(user_id: number, post_id: number) {
     const data = await this.userService.isLike(user_id, post_id);
@@ -80,44 +119,16 @@ export class AuthService {
     }
   }
 
-  // 登录接口
-  async login(userInfo: UserStatusDTO) {
-    const token = this.createToken(userInfo);
-    return {
-      ...token
-    }
-  }
-
-  // 创建token
-  createToken({ username, id, userId, photoUser, email }: UserStatusDTO) {
-    const token = this.jwtService.sign({ username, userId, id, photoUser, email });
-    const expires = process.env.expiresTime;
-
-    return {
-      token,
-      expires,
-    }
-  }
-
-  // 获取用户的所有帖子id
-  async getUserTiezi(user: UserStatusDTO) {
-    const data = await this.userService.findUserTiezi(user.userId);
-
-    const tiezisID = [];
-    for (let i = 0; i < data.tiezis.length; i++) {
-      tiezisID.push(data.tiezis[i].id);
-    }
-    return tiezisID;
-  }
-
   // 登录后关注贴吧
   async authFollowTieba(user_id: number, tieba_id: number) {
     return await this.userService.followTieba(user_id, tieba_id)
   }
+  
 
   // 获取用户关注的所有贴吧
-  async authUserTieba(user: UserStatusDTO) {
-    const data = await this.userService.findUserTieba(user.id);
+  async authUserTieba(id) {
+    const data = await this.userService.findUserTieba(id);
+    
     const tiebaId = [];
     for (let i = 0; i < data.tieba.length; i++) {
       tiebaId.push({
@@ -130,8 +141,8 @@ export class AuthService {
   }
 
   // 判断用户是否关注当前贴吧
-  async isSubscribe(user: UserStatusDTO, tiebaId: number) {
-    const data = await this.userService.findUserTieba(user.id);
+  async isSubscribe(userId: number, tiebaId: number) {
+    const data = await this.userService.findUserTieba(userId);
     for (let i = 0; i < data.tieba.length; i++) {
       if (Number(tiebaId) === data.tieba[i].id) {
         return { data: true };
@@ -142,8 +153,6 @@ export class AuthService {
 
   // 获登录用户的所有帖子（包括隐藏的帖子）
   async authUserPosts(id: number, page: number, pageSize: number){
-    console.log(typeof id, typeof page, typeof pageSize);
-    
     return await this.userService.findLoginUserPost(id, page, pageSize);
   }
 }

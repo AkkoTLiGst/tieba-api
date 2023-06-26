@@ -43,6 +43,8 @@ export class TiebasController {
     return this.tiebasService.findOneByID(+id);
   }
 
+  
+
   @Get('count')
   @ApiOperation({summary: '获取贴吧总数', description: '不需要传值'})
   findCount() {

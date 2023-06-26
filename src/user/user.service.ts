@@ -28,6 +28,7 @@ export class UserService {
       data.email = createUserDto.email;
       data.password = createUserDto.password;
       data.mobile = createUserDto.mobile;
+      data.aboutMe = createUserDto.aboutMe;
       data.tieba = [];
       // 判断用户是否上传了头像
       if (file) {
@@ -44,6 +45,28 @@ export class UserService {
       };
     } catch (error) {
       return error
+    }
+  }
+
+  // 上传图片
+  async uploadUserImg(id: number, filename) {
+    const usr = await this.user.findOne({ where: { id } });
+    usr.photoUser = filename;
+    this.user.save(usr);
+    return { message: '上传成功' }
+  }
+
+  // 更改个人信息
+  async updateUserInfo(updateUserDTo: UpdateUserDto){
+    const usr = await this.user.findOne({where: {id: updateUserDTo.id}});
+    usr.userId = updateUserDTo.userId;
+    usr.aboutMe = updateUserDTo.aboutMe;
+    usr.userName = updateUserDTo.userName;
+    this.user.save(usr);
+
+    return {
+      message: '更新成功',
+      code: 200
     }
   }
 
@@ -64,6 +87,7 @@ export class UserService {
 
     })
   }
+  
   findOneById(id: number) {
     return this.user.findOne({
       where: { id },
@@ -87,24 +111,34 @@ export class UserService {
       take: pageSize // 设置分页
     });
 
+    const count = await this.tiezi.count({
+      where: { createrId: userId, isHidePost: false }
+    })
+
     return {
-      data: data,
+      data,
+      count,
       code: 200,
-      message: '查询成功，返回帖子数组'
+      message: '查询成功，返回帖子数组和符合条件的帖子的数量'
     }
   }
 
   // 获登录用户的所有帖子（包括隐藏的帖子）
   async findLoginUserPost(userId: number, page: number, pageSize: number) {
     const data = await this.tiezi.find({
-      where: { createrId: userId},
+      where: { createrId: userId },
       order: { id: 'DESC' },
       skip: (page - 1) * pageSize, // 设置偏移量
       take: pageSize // 设置分页
     });
 
+    const count = await this.tiezi.count({
+      where: { createrId: userId }
+    })
+
     return {
-      data: data,
+      data,
+      count,
       code: 200,
       message: '查询成功，返回帖子数组'
     }

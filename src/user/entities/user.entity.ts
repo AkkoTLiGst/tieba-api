@@ -27,6 +27,10 @@ export class User {
     @Column()
     photoUser: string;
 
+    // 用户简介
+    @Column()
+    aboutMe: string;
+
     // 帖子
     @OneToMany(() => Tiezi, (tiezi) => tiezi.user)
     tiezis: Tiezi[];

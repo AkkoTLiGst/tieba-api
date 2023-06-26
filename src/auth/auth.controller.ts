@@ -8,6 +8,7 @@ import { LocalAuthGuard } from './guards/local-auch.guard';
 import { JwtAuthGuard } from './guards/jwt-auch.guard';
 import { ApiTags, ApiOperation, ApiProperty, ApiBearerAuth } from '@nestjs/swagger';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 declare module 'express' {
   interface Request {
@@ -58,6 +59,15 @@ export class AuthController {
   authLike(@Body() data) {
     return this.authService.authLike(data.user_id, data.post_id, data.code);
   }
+  
+  // 登录后更新用户信息
+  @ApiOperation({ summary: '更新用户信息', description: '' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Put('authUpdateUser')
+  updateUser(@Body() data: {userInfo: UpdateUserDto}) {
+    return this.authService.authUpdateUser(data.userInfo);
+  }
 
 
   // 登录后判断是否点赞
@@ -86,7 +96,7 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('authUserTieba')
   authUserTieba(@Query() data) {
-    return this.authService.authUserTieba(data.user_id);
+    return this.authService.authUserTieba(data.id);
   }
 
   // 获取用户关注的贴吧
