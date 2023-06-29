@@ -14,7 +14,7 @@ export class TiebasController {
   @ApiOperation({summary: '创建贴吧', description: '可以携带图片添加头像'})
   @UseInterceptors(FileInterceptor('file'))
   create(@Body() createTiebaDto: CreateTiebaDto, @UploadedFile() file) {
-    console.log(createTiebaDto, file);
+    // console.log(createTiebaDto, file);
     
     return this.tiebasService.create(createTiebaDto, file);
   }
