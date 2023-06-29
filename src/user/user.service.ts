@@ -28,7 +28,7 @@ export class UserService {
       data.email = createUserDto.email;
       data.password = createUserDto.password;
       data.mobile = createUserDto.mobile;
-      data.aboutMe = createUserDto.aboutMe;
+      data.aboutMe = '暂无简介';
       data.tieba = [];
       // 判断用户是否上传了头像
       if (file) {
@@ -165,7 +165,7 @@ export class UserService {
     post.thumbUp = ++post.thumbUp;
     this.tiezi.update(post_id, post);
 
-    return {
+    return { 
       message: '点赞成功',
       code: 200
     }

@@ -34,6 +34,7 @@ export class TieziService {
     zi.threadTitle = createTieziDto.threadTitle;
     zi.content = createTieziDto.content;
     zi.ctieBaId = createTieziDto.ctieBaId;
+    zi.isHidePost = createTieziDto.isHidePost;
     
     // 判断帖子是否包含图片
     if (file) {

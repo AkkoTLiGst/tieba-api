@@ -28,4 +28,11 @@ export class CreateTieziDto {
     })
     // 帖子内容
     content: string;
+
+    @ApiProperty({
+        example: false,
+        type: Boolean
+    })
+    // 是否隐藏
+    isHidePost: boolean;
 }

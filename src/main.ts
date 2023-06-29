@@ -11,6 +11,7 @@ async function bootstrap() {
   SwaggerModule.setup('/api-docs', app, document); // 设置文档接口
 
   app.useStaticAssets(join(__dirname, 'images')); // 用于访问静态目录
-  await app.listen(3000);
+  app.enableCors(); // 开启跨域
+  await app.listen(30605);
 }
 bootstrap();

@@ -11,7 +11,6 @@ export class TieziController {
   constructor(private readonly tieziService: TieziService) { }
 
   @Post('create')
-
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({summary: '创建帖子', description: '可以携带图片'})
   create(@Body() createTieziDto: CreateTieziDto, @UploadedFile() file) {
