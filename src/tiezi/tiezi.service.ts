@@ -92,8 +92,8 @@ export class TieziService {
 
   async randomTieziTB(tiebaId: number) {
     // 截取最新的十条ctiebaId为"tiebaId"的数据
-    let datalist = await this.tiezi.createQueryBuilder()
-      .where('tiezi.ctieBaId = :tiebaId', { tiebaId })
+    let datalist = await this.tiezi.createQueryBuilder('tiezi')
+      .where('tiezi.ctieBaId=:tiebaId', { tiebaId })
       .orderBy('tiezi.createTimeTiezi', 'DESC')
       .limit(10)
       .getMany();

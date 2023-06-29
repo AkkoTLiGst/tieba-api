@@ -4,7 +4,10 @@ import { UpdateTiebaDto } from './dto/update-tieba.dto';
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Tieba } from './entities/tieba.entity';
-import { Tiezi } from 'src/tiezi/entities/tiezi.entity';
+import { zip } from 'compressing';
+import { Response } from 'express';
+import { join } from 'path';
+import { createReadStream } from 'fs';
 
 @Injectable()
 export class TiebasService {
@@ -68,6 +71,21 @@ export class TiebasService {
       code: 200,
       message: '总数查询成功'
     }
+  }
+
+  async streamAvatar(imgName: string, res: Response) {
+    const url = join(__dirname, `../images/tiebas/${imgName}`);
+   const readStream =  createReadStream(url);
+
+    // 设置返回头知识资源的MIME类型为application/octet-stream
+    res.setHeader('Content-Type', 'application/octet-stream');
+    // 设置文件名为 kkp
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=kkp`,
+    );
+
+    readStream.pipe(res); // 流形式下载，语法:file.pipe();
   }
 
   update(id: number, updateTiebaDto: UpdateTiebaDto) {

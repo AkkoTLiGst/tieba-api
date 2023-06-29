@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query, Res } from '@nestjs/common';
 import { TiebasService } from './tiebas.service';
 import { CreateTiebaDto } from './dto/create-tieba.dto';
 import { UpdateTiebaDto } from './dto/update-tieba.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiProperty, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @ApiTags("贴吧接口")
 @Controller('tiebas')
@@ -50,7 +51,13 @@ export class TiebasController {
   @Get('count')
   @ApiOperation({summary: '获取贴吧总数', description: '不需要传值'})
   findCount() {
-    return this.tiebasService.findCount();
+    return this.tiebasService.findCount();  
+  }
+
+  // 获取头像的blob
+  @Get('Stream')
+  streamAvatar(@Res() res: Response,@Query() data){
+    return this.tiebasService.streamAvatar(data.imgName, res);
   }
 
   @Patch(':id')
